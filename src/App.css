@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+
+
+* {
+  color-scheme: light;
+}
+
+html,
+body {
+  background-color: #ffffff !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+canvas {
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
