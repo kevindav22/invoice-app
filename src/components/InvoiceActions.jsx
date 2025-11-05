@@ -10,6 +10,13 @@ const InvoiceActions = ({ invoiceRef, data, onBack }) => {
   const [loadingJPEG, setLoadingJPEG] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
 
+  // Fungsi untuk membangun nama file
+  const getFileName = () => {
+    const name = data.customerName?.trim().replace(/\s+/g, '_') || 'customer';
+    const description = data.items?.[0]?.description?.trim().replace(/\s+/g, '_') || 'invoice';
+    return `${name}-${description}`;
+  };
+
   const handleDownloadJPEG = () => {
     const element = invoiceRef.current;
     if (!element) return;
@@ -25,12 +32,9 @@ const InvoiceActions = ({ invoiceRef, data, onBack }) => {
           cacheBust: true,
         });
 
-        saveAs(imgData, `invoice-${data.customerName || 'customer'}.jpeg`);
+        saveAs(imgData, `${getFileName()}.jpeg`);
       } catch (err) {
-        toast.error('Failed to generate JPEG. Make sure all images are loaded and your connection is stable.', {
-          position: 'top-center',
-          autoClose: 3000,
-        });
+        toast.error('Failed to generate JPEG. Make sure all images are loaded and your connection is stable.', { position: 'top-center', autoClose: 3000 });
       } finally {
         setLoadingJPEG(false);
       }
@@ -75,12 +79,9 @@ const InvoiceActions = ({ invoiceRef, data, onBack }) => {
         }
 
         pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-        pdf.save(`invoice-${data.customerName || 'customer'}.pdf`);
+        pdf.save(`${getFileName()}.pdf`);
       } catch (err) {
-        toast.error('Failed to generate PDF. Make sure all images are loaded and your connection is stable.', {
-          position: 'top-center',
-          autoClose: 3000,
-        });
+        toast.error('Failed to generate PDF. Make sure all images are loaded and your connection is stable.', { position: 'top-center', autoClose: 3000 });
       } finally {
         setLoadingPDF(false);
       }

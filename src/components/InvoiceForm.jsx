@@ -1,23 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingButton from './common/LoadingButton';
 import Captcha from './common/Captcha';
 
+const LOCAL_STORAGE_KEY = 'invoiceFormData';
+
 const InvoiceForm = ({ onGenerate }) => {
-  const [formData, setFormData] = useState({
-    customerName: '',
-    customerPosition: '',
-    customerEmail: '',
-    customerPhone: '',
-    items: [{ description: '', qty: '', price: '' }],
-    tax: '',
-    discount: '',
+  // Load initial data dari localStorage
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return saved
+      ? JSON.parse(saved)
+      : {
+          customerName: '',
+          customerPosition: '',
+          customerEmail: '',
+          customerPhone: '',
+          items: [{ description: '', qty: '', price: '' }],
+          tax: '',
+          discount: '',
+        };
   });
 
   const [loading, setLoading] = useState(false);
   const [captchaValid, setCaptchaValid] = useState(false);
+
+  // Simpan data ke localStorage setiap formData berubah
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,9 +58,28 @@ const InvoiceForm = ({ onGenerate }) => {
     setFormData({ ...formData, items: updatedItems });
   };
 
+  const handleReset = () => {
+    const emptyData = {
+      customerName: '',
+      customerPosition: '',
+      customerEmail: '',
+      customerPhone: '',
+      items: [{ description: '', qty: '', price: '' }],
+      tax: '',
+      discount: '',
+    };
+    setFormData(emptyData);
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    toast.success('Form has been reset!', {
+      position: 'top-center',
+      autoClose: 2000,
+      hideProgressBar: true,
+      theme: 'colored',
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!captchaValid) {
       toast.error('You seem not to be human. Please try again!', {
         position: 'top-center',
@@ -198,8 +230,8 @@ const InvoiceForm = ({ onGenerate }) => {
         {/* CAPTCHA */}
         <Captcha onValidate={setCaptchaValid} />
 
-        {/* Submit Button */}
-        <div className="mt-2 text-center">
+        {/* Submit & Reset Buttons */}
+        <div className="mt-4 flex flex-col gap-3">
           <LoadingButton
             loading={loading}
             onClick={handleSubmit}
@@ -208,7 +240,12 @@ const InvoiceForm = ({ onGenerate }) => {
           >
             Generate Invoice
           </LoadingButton>
+
+          <button type="button" onClick={handleReset} className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition-all">
+            Reset
+          </button>
         </div>
+
         {/* COPYRIGHT */}
         <p className="text-[10px] text-gray-400 mt-6 text-center">© {new Date().getFullYear()} Davintech Creative Studio. All rights reserved.</p>
       </form>

@@ -41,8 +41,8 @@ const InvoiceDetails = ({ data }) => {
         </div>
         <div className="text-right">
           <h2 className="text-red-600 font-semibold text-lg mb-2">Payment Method:</h2>
-          <p>BRI : 686428824768724</p>
-          <p>Dana : 0998798798</p>
+          <p className='font-medium'>BRI : 6870 0100 6108 508</p>
+          <p className='font-medium'> Dana : 088233634050</p>
           <p>A/n : Kevin David R</p>
         </div>
       </div>
@@ -157,7 +157,7 @@ const InvoiceDetails = ({ data }) => {
             </div>
           </div>
           <p className="font-semibold">Kevin David Richard</p>
-          <p>Owner</p>
+          <p>Freelancer</p>
         </div>
       </div>
 
